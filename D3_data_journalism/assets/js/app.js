@@ -1,5 +1,13 @@
 // @TODO: YOUR CODE HERE!
 
+//D3 - control every pixel in page
+//Selections and transitions
+//associate components to DOM, data binding
+
+
+//
+
+
 //Create scatter plot using D3 interactive elements to display Health Risks as seen in demographics found in 2014 ACS US Census Bureau and Behavior Risk Factor Surveillance System. Choose two of the variables to create a scatter plot that represents each state in a circle type.
 // starter code provided - index.html with links, assests folder holding:  css files: d3Style.css and style.css; data: data.csv; js files: eslintrc.json and app.js
 // use app.js to write D3 code and create a scatter plot: dimensions, axes, labels, ticks, circles with state ID, and plot two data variables, eg Healthcare vs Poverty
