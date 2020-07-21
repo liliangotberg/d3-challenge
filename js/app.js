@@ -1,13 +1,5 @@
 // @TODO: YOUR CODE HERE!
 
-//D3 - control every pixel in page
-//Selections and transitions
-//associate components to DOM, data binding
-
-
-//
-
-
 //Create scatter plot using D3 interactive elements to display Health Risks as seen in demographics found in 2014 ACS US Census Bureau and Behavior Risk Factor Surveillance System. Choose two of the variables to create a scatter plot that represents each state in a circle type.
 // starter code provided - index.html with links, assests folder holding:  css files: d3Style.css and style.css; data: data.csv; js files: eslintrc.json and app.js
 // use app.js to write D3 code and create a scatter plot: dimensions, axes, labels, ticks, circles with state ID, and plot two data variables, eg Healthcare vs Poverty
@@ -44,7 +36,7 @@ var svg = d3.select("#scatter")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
-    .attr("class", "chart");
+    .attr("class", "CHART change to #scatter);
 
 // create circle radius variable to define radius size
 // use crGet function to define circle radius per user display needs, if display is less than 530 px circle radius will be 5 px, if display is more than 530 px circle radius will be 10 px
@@ -56,11 +48,11 @@ var svg = d3.select("#scatter")
 var circRadius;
 
 function crGet() {
-    if(svgWidth <= 530) {
+    if(width <= 530) 
         circRadius = 5;
     } 
     else{
-        circRadius = 10;  }
+        circRadius = 10;  
 }
 crGet();
 
@@ -79,9 +71,9 @@ var xText = d3.select(".xText");
     xText.attr(
     "transform",
     "translate(" +
-    ((svgWidth - labelArea) / 2 + labelArea) + 
+    ((width - labelArea) / 2 + labelArea) + 
     ", " +
-    (svgHeight - margin - tPadBot) +
+    (height - margin - tPadBot) +
     ")"
 );
 
@@ -96,7 +88,7 @@ var xText = d3.select(".xText");
 
 // create leftText x & y variables
 var leftTextX = margin + tPadLeft;
-var leftTextY = (svgHeight + labelArea) / 2 - labelArea;
+var leftTextY = (height + labelArea) / 2 - labelArea;
 
 // y left axis
 svg.append("g").attr("class", "yText");
@@ -129,7 +121,7 @@ d3.csv("assets/data/data.csv").then(function(data) {
     visualize(data);
 });
 
-function visualize(theData) {
+function visualize(thedata) {
 
     var curlX = "poverty";
     var curlY = "healthcare";
@@ -140,25 +132,35 @@ function visualize(theData) {
     var yMin;
     var yMax;
 
-    function xMinMax() {
-        xMin = d3.min(theData, function(d) {
-            return parseFloat(d[curX]) * 0.90;
-        });
-    
-        xMax = d3.max(theData, function(d) {
-            return parseFloat(d[curX]) * 1.10;
-        });
-    }   
-    function yMinMax() {
-    
+}   //================================================================================
+
+    //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
+function xMinMax() {
+    xMin = d3.min(theData, function(d) {
+        return parseFloat(d[curlX]) * 0.90;
+    });
+
+    xMax = d3.max(theData, function(d) {
+        return parseFloat(d[curlX]) * 1.10;
+    });
+}   
+function yMinMax() {
+
         yMin = d3.min(theData, function(d) {
-            return parseFloat(d[curY]) * 0.90;
+            return parseFloat(d[curlY]) * 0.90;
         });
 
-        yMax + d3.max(theData, function(d) {
-            return parseFloat(d[curY]) * 1.10;
+        yMax + d3.max(thedata, function(d) {
+            return parseFloat(d[curlY]) * 1.10;
         });
     }
+
+    //================================================================================
+
+    //5- instantiate the scatter plot
+    //use min max variables created above to define axes scale for scatter plot
+    //assign values and marking to svg axes using group element
+    //use the transform attribute to note where axes should be placed
 
     xMinMax();
     yMinMax();
@@ -166,11 +168,11 @@ function visualize(theData) {
     var xScale = d3
         .scaleLinear()
         .domain([xMin, xMax])
-        .range([margin + labelArea, svgWidth - margin]);
+        .range([margin + labelArea, width - margin]);
     var yScale = d3
         .scaleLinear()
         .domain([yMin, yMax])
-        .range([svgHeight - margin - labelArea, margin]);
+        .range([height - margin - labelArea, margin]);
 
     // pass scales into the axis methods to create the axes. 
     var xAxis = d3.axisBottom(xScale);
@@ -180,7 +182,7 @@ function visualize(theData) {
         .append("g")
         .call(xAxis)
         .attr("class", "xAxis")
-        .attr("transform", "translate(0," + (svgHeight - margin - labelArea) + ")");
+        .attr("transform", "translate(0," + (height - margin - labelArea) + ")");
     svg
         .append("g")
         .call(yAxis)
@@ -193,24 +195,12 @@ function visualize(theData) {
     theCircles   
         .append("circle")
         .attr("cx", function(d) {
-            return xScale(d)[curX] ;
+            return xScale(d)[curlX] ;
         })
         .attr("cy", function(d) {
-            return yScale(d)[curY] ;
+            return yScale(d)[curlY] ;
         }) 
         .attr("r", circRadius)
         .attr("class", function(d) {
             return "stateCircle " + d.abbr;
-        })  
-
-    //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
-
-
-    //================================================================================
-
-    //5- instantiate the scatter plot
-    //use min max variables created above to define axes scale for scatter plot
-    //assign values and marking to svg axes using group element
-    //use the transform attribute to note where axes should be placed
-   
-}
+})
