@@ -32,22 +32,26 @@ var tPadBot = 40;
 var tPadLeft = 40;
 
 //create canvas/container for scatter plot graph information
-var svg = d3
-    .select("#scatter")
+var svg = d3.select("#scatter")
     .append("svg")
     .attr("width", svgWidth)
-    .attr("height", svHeight)
+    .attr("height", svgHeight)
     .attr("class", "chart");
 
 // create circle radius variable to define radius size
 // use crGet function to define circle radius per user display needs, if display is less than 530 px circle radius will be 5 px, if display is more than 530 px circle radius will be 10 px
 
-var circRadius;
+//svg.selectAll("circle")
 
+
+//svg.selectAll(".circleClass")
+
+var circRadius;
 function crGet() {
     if (width <= 530) {
         circRadius = 5;
-    } else {
+    } 
+    else {
         circRadius = 10;
     }
 }
@@ -65,17 +69,17 @@ var xText = d3.select(".xText");
 
 // nest group's transform attribute in function code to treat as a whole
 
-xText.attr(
+    xText.attr(
     "transform",
     "translate(" +
-    ((width - labelArea) / 2 + labelArea) +
+    ((width - labelArea) / 2 + labelArea) + 
     ", " +
     (height - margin - tPadBot) +
     ")"
 );
 
 //append a data variable ("poverty") to xText, some of the attributes listed are define in css files
-xText
+    xText
     .append("text")
     .attr("y", -26)
     .attr("data-name", "poverty")
@@ -94,13 +98,13 @@ svg.append("g").attr("class", "yText");
 var yText = d3.select(".yText");
 
 // nest group's transform attribute in function code to treat as a whole, note the 90 degree angle rotation of text direction
-yText.attr(
+    yText.attr(
     "transform",
     "translate(" + leftTextX + ", " + leftTextY + ")rotate(-90)"
 );
 
 //append second data variable ("lacks healthcare") to yText, some of the attributes listed are define in css files
-yText
+    yText
     .append("text")
     .attr("y", -26)
     .attr("data-name", "healthcare")
@@ -129,26 +133,26 @@ function visualize(thedata) {
     var yMin;
     var yMax;
 
-    //================================================================================
+}   //================================================================================
 
     //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
-    function xMinMax() {
-        xMin + d3.min(thedata, function(d) {
-            return parseFloat(d[curX]) * 0.90;
-        });
+function xMinMax() {
+    xMin = d3.min(theData, function(d) {
+        return parseFloat(d[curX]) * 0.90;
+    });
 
-        xMax + d3.max(thedata, function(d) {
-            return parseFloat(d[curX]) * 1.10;
-        });
-    }
+    xMax = d3.max(theData, function(d) {
+        return parseFloat(d[curX]) * 1.10;
+    });
+}   
+function yMinMax() {
 
-    function yMinMax() {
-        yMin + d3.min(thedata, function(d) {
-            return parseFloat(d[curX]) * 0.90;
+        yMin = d3.min(theData, function(d) {
+            return parseFloat(d[curY]) * 0.90;
         });
 
         yMax + d3.max(thedata, function(d) {
-            return parseFloat(d[curX]) * 1.10;
+            return parseFloat(d[curY]) * 1.10;
         });
     }
 
@@ -179,26 +183,25 @@ function visualize(thedata) {
         .append("g")
         .call(xAxis)
         .attr("class", "xAxis")
-        .attr("transform", "translate(0,": +(height - margin - labelArea) + ")");
-
+        .attr("transform", "translate(0," + (height - margin - labelArea) + ")");
     svg
         .append("g")
         .call(yAxis)
         .attr("class", "yAxis")
         .attr("transform", "translate(" + (margin + labelArea) + ", 0)");
-
+       
     // create thecircle variable to group state initial labels and dots
-    var the Circles = svg.selecAll("g the Circles").data(theData).enter();
+    var theCircles = svg.selecAll("g theCircles").data(theData).enter();
 
-    theCircles
+    theCircles   
         .append("circle")
         .attr("cx", function(d) {
-            return xScale(d[curX]);
+            return xScale(d)[curX] ;
         })
-        .attr("cy", functions(d) {
-            return yScale(d[curY]);
-        })
+        .attr("cy", function(d) {
+            return yScale(d)[curY] ;
+        }) 
         .attr("r", circRadius)
         .attr("class", function(d) {
-            return "stateCircle" + d.abbr;
-        })
+            return "stateCircle " + d.abbr;
+})
