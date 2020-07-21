@@ -43,17 +43,16 @@ var svg = d3.select("#scatter")
 
 //svg.selectAll("circle")
 
-
 //svg.selectAll(".circleClass")
 
 var circRadius;
+
 function crGet() {
-    if (width <= 530) {
+    if(svgWidth <= 530) {
         circRadius = 5;
     } 
-    else {
-        circRadius = 10;
-    }
+    else{
+        circRadius = 10;  }
 }
 crGet();
 
@@ -72,9 +71,9 @@ var xText = d3.select(".xText");
     xText.attr(
     "transform",
     "translate(" +
-    ((width - labelArea) / 2 + labelArea) + 
+    ((svgWidth - labelArea) / 2 + labelArea) + 
     ", " +
-    (height - margin - tPadBot) +
+    (svgHeight - margin - tPadBot) +
     ")"
 );
 
@@ -89,7 +88,7 @@ var xText = d3.select(".xText");
 
 // create leftText x & y variables
 var leftTextX = margin + tPadLeft;
-var leftTextY = (height + labelArea) / 2 - labelArea;
+var leftTextY = (svgHeight + labelArea) / 2 - labelArea;
 
 // y left axis
 svg.append("g").attr("class", "yText");
@@ -122,10 +121,10 @@ d3.csv("assets/data/data.csv").then(function(data) {
     visualize(data);
 });
 
-function visualize(thedata) {
+function visualize(theData) {
 
     var curlX = "poverty";
-    var curY = "healthcare";
+    var curlY = "healthcare";
 
     //create min and max parameters for x and y axes
     var xMin;
@@ -133,35 +132,25 @@ function visualize(thedata) {
     var yMin;
     var yMax;
 
-}   //================================================================================
-
-    //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
-function xMinMax() {
-    xMin = d3.min(theData, function(d) {
-        return parseFloat(d[curX]) * 0.90;
-    });
-
-    xMax = d3.max(theData, function(d) {
-        return parseFloat(d[curX]) * 1.10;
-    });
-}   
-function yMinMax() {
-
+    function xMinMax() {
+        xMin = d3.min(theData, function(d) {
+            return parseFloat(d[curX]) * 0.90;
+        });
+    
+        xMax = d3.max(theData, function(d) {
+            return parseFloat(d[curX]) * 1.10;
+        });
+    }   
+    function yMinMax() {
+    
         yMin = d3.min(theData, function(d) {
             return parseFloat(d[curY]) * 0.90;
         });
 
-        yMax + d3.max(thedata, function(d) {
+        yMax + d3.max(theData, function(d) {
             return parseFloat(d[curY]) * 1.10;
         });
     }
-
-    //================================================================================
-
-    //5- instantiate the scatter plot
-    //use min max variables created above to define axes scale for scatter plot
-    //assign values and marking to svg axes using group element
-    //use the transform attribute to note where axes should be placed
 
     xMinMax();
     yMinMax();
@@ -169,11 +158,11 @@ function yMinMax() {
     var xScale = d3
         .scaleLinear()
         .domain([xMin, xMax])
-        .range([margin + labelArea, width - margin]);
+        .range([margin + labelArea, svgWidth - margin]);
     var yScale = d3
         .scaleLinear()
         .domain([yMin, yMax])
-        .range([height - margin - labelArea, margin]);
+        .range([svgHeight - margin - labelArea, margin]);
 
     // pass scales into the axis methods to create the axes. 
     var xAxis = d3.axisBottom(xScale);
@@ -183,7 +172,7 @@ function yMinMax() {
         .append("g")
         .call(xAxis)
         .attr("class", "xAxis")
-        .attr("transform", "translate(0," + (height - margin - labelArea) + ")");
+        .attr("transform", "translate(0," + (svgHeight - margin - labelArea) + ")");
     svg
         .append("g")
         .call(yAxis)
@@ -204,4 +193,16 @@ function yMinMax() {
         .attr("r", circRadius)
         .attr("class", function(d) {
             return "stateCircle " + d.abbr;
-})
+        })  
+
+    //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
+
+
+    //================================================================================
+
+    //5- instantiate the scatter plot
+    //use min max variables created above to define axes scale for scatter plot
+    //assign values and marking to svg axes using group element
+    //use the transform attribute to note where axes should be placed
+   
+}
