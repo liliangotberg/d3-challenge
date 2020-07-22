@@ -1,206 +1,125 @@
+
+//Good Code  - 7/21
+
+
 // @TODO: YOUR CODE HERE!
+var svgWidth = 960;
+var svgHeight = 500;
 
-//Create scatter plot using D3 interactive elements to display Health Risks as seen in demographics found in 2014 ACS US Census Bureau and Behavior Risk Factor Surveillance System. Choose two of the variables to create a scatter plot that represents each state in a circle type.
-// starter code provided - index.html with links, assests folder holding:  css files: d3Style.css and style.css; data: data.csv; js files: eslintrc.json and app.js
-// use app.js to write D3 code and create a scatter plot: dimensions, axes, labels, ticks, circles with state ID, and plot two data variables, eg Healthcare vs Poverty
-//use python -m http.server to run code(localhost: 8000) 
-//================================================================================
+var margin = {
+  top: 20,
+  right: 40,
+  bottom: 60,
+  left: 100
+};
 
-/*STEPS */
-//================================================================================
-//================================================================================
+var width = svgWidth - margin.left - margin.right;
+var height = svgHeight - margin.top - margin.bottom;
 
-//1 Create container for scatter plot, reference line 22 <div id="scatter"> in html. Render html code and use inspect tool to calculated container dimensions using inspect tool found when you render html code.
-//use Scalable Vector Graphic(SVG) code to design visualizations. sgv code is embedded into a <div> tag in html file. svg properties are specified as attributes. when possible group elements
-//Begin by creating a container to hold svg image of scatter plot. use select() method to append() sgv elements (width, height, margin, x and y axes, padding, text, thickness, font, color, fill) to svg image (scatter plot). for circle we need cx (x-coordinate), cy (y-coordinate) and r (radius). circles will represent states.
-
-
-// use dig tag in html file for it to automatically calculate width
-var svgWidth = parseInt(d3.select("#scatter").style("width"));
-
-//scatter plot height - shorthand
-var svgHeight = svgWidth - svgWidth / 4;
-
-//scatter plot margin spacing- shorthand
-var margin = 20;
-
-//scatter plot text px spacing
-var labelArea = 110;
-
-//scatter plot text padding for x/bottom axis and y/left axis
-var tPadBot = 40;
-var tPadLeft = 40;
-
-//create canvas/container for scatter plot graph information
+// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
 var svg = d3.select("#scatter")
-    .append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
-    .attr("class", "CHART change to #scatter);
+  .append("svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight);
 
-// create circle radius variable to define radius size
-// use crGet function to define circle radius per user display needs, if display is less than 530 px circle radius will be 5 px, if display is more than 530 px circle radius will be 10 px
+var chartGroup = svg.append("g")
+  .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//svg.selectAll("circle")
+// Import Data
+d3.csv("../StarterCode/assets/data/data.csv").then(function(smokeData) {
+  console.log(smokeData);
 
-//svg.selectAll(".circleClass")
-
-var circRadius;
-
-function crGet() {
-    if(width <= 530) 
-        circRadius = 5;
-    } 
-    else{
-        circRadius = 10;  
-}
-crGet();
-
-//================================================================================
-
-// 2 Create scatter plot axes labels, xText and yText. scatter plot axes labels will be assign into a "g" group element. so we will append/add group element to a "class" attribute we labeled "xText". group element will nest labels and treat labels as a group to control location of grouped labels as display size changes or when page is refreshed. we then create variable function to house above commands.
-
-//x bottom axis
-svg.append("g").attr("class", "xText");
-
-// create x-axis variable
-var xText = d3.select(".xText");
-
-// nest group's transform attribute in function code to treat as a whole
-
-    xText.attr(
-    "transform",
-    "translate(" +
-    ((width - labelArea) / 2 + labelArea) + 
-    ", " +
-    (height - margin - tPadBot) +
-    ")"
-);
-
-//append a data variable ("poverty") to xText, some of the attributes listed are define in css files
-    xText
-    .append("text")
-    .attr("y", -26)
-    .attr("data-name", "poverty")
-    .attr("data-axis", "x")
-    .attr("class", "aText active x")
-    .text("In Poverty (%)");
-
-// create leftText x & y variables
-var leftTextX = margin + tPadLeft;
-var leftTextY = (height + labelArea) / 2 - labelArea;
-
-// y left axis
-svg.append("g").attr("class", "yText");
-
-// create y-axis variable
-var yText = d3.select(".yText");
-
-// nest group's transform attribute in function code to treat as a whole, note the 90 degree angle rotation of text direction
-    yText.attr(
-    "transform",
-    "translate(" + leftTextX + ", " + leftTextY + ")rotate(-90)"
-);
-
-//append second data variable ("lacks healthcare") to yText, some of the attributes listed are define in css files
-    yText
-    .append("text")
-    .attr("y", -26)
-    .attr("data-name", "healthcare")
-    .attr("data-axis", "y")
-    .attr("class", "aText active y")
-    .text("Lacks Healthcare (%)");
-
-//================================================================================
-
-//3 - Import data and visualize
-//use d3.csv method to import csv
-//call visualize function to display csv file
-//create variables to represent each axis, and their min and max values
-d3.csv("assets/data/data.csv").then(function(data) {
-    visualize(data);
-});
-
-function visualize(thedata) {
-
-    var curlX = "poverty";
-    var curlY = "healthcare";
-
-    //create min and max parameters for x and y axes
-    var xMin;
-    var xMax;
-    var yMin;
-    var yMax;
-
-}   //================================================================================
-
-    //4 - create x and y axes functions for above values and parameters to parse through code, use .min and .max methods
-function xMinMax() {
-    xMin = d3.min(theData, function(d) {
-        return parseFloat(d[curlX]) * 0.90;
+    // Parse Data/Cast as numbers
+    smokeData.forEach(function(data) {
+      data.healthcare = +data.healthcare;
+      data.poverty = +data.poverty;
     });
 
-    xMax = d3.max(theData, function(d) {
-        return parseFloat(d[curlX]) * 1.10;
-    });
-}   
-function yMinMax() {
+    //Create scale functions
+    var xLinearScale = d3.scaleLinear()
+      .domain([8, d3.max(smokeData, d => d.healthcare)])
+      .range([0, width]);
 
-        yMin = d3.min(theData, function(d) {
-            return parseFloat(d[curlY]) * 0.90;
-        });
+    var yLinearScale = d3.scaleLinear()
+      .domain([0, d3.max(smokeData, d => d.poverty)])
+      .range([height, 0]);
 
-        yMax + d3.max(thedata, function(d) {
-            return parseFloat(d[curlY]) * 1.10;
-        });
-    }
+    // Create axis functions
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    var leftAxis = d3.axisLeft(yLinearScale);
 
-    //================================================================================
+    // Append Axes to the chart
+    chartGroup.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(bottomAxis);
 
-    //5- instantiate the scatter plot
-    //use min max variables created above to define axes scale for scatter plot
-    //assign values and marking to svg axes using group element
-    //use the transform attribute to note where axes should be placed
+    chartGroup.append("g")
+      .call(leftAxis);
 
-    xMinMax();
-    yMinMax();
+    //Create Circles
+    var circlesGroup = chartGroup.selectAll("circle")
+    .data(smokeData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xLinearScale(d.healthcare))
+    .attr("cy", d => yLinearScale(d.poverty))
+    .attr("r", "15")
+    .attr("fill", "skyblue")
+    .attr("opacity", ".5");
 
-    var xScale = d3
-        .scaleLinear()
-        .domain([xMin, xMax])
-        .range([margin + labelArea, width - margin]);
-    var yScale = d3
-        .scaleLinear()
-        .domain([yMin, yMax])
-        .range([height - margin - labelArea, margin]);
+    // Add the text to the circles 
+    //var circlesGroup = chartGroup.append("g")
+    //.selectAll("text")
+    //.data(smokeData)
+    //.enter()
+    //.append("text")
+    //.attr("dx", d => xLinearScale(d.poverty)-9) //offset text to the left with -
+    //.attr("dy", d => yLinearScale(d.healthcare)+4) //offset text down with +
+    //.text(d => d.abbr)
+    //.attr("font-family", "arial")
+    //.attr("font-size", "12px")
+    //.attr("fill", "blue")
 
-    // pass scales into the axis methods to create the axes. 
-    var xAxis = d3.axisBottom(xScale);
-    var yAxis = d3.axisLeft(yScale);
+    // Initialize tool tip
+    var toolTip = d3.tip()
+      .attr("class", "tooltip")
+      .offset([80, -60])
+      .html(function(d) {
+        return (`${d.state}<br>healthcare: ${d.healthcare}<br>Hits: ${d.poverty}`);
+      });
 
-    svg
-        .append("g")
-        .call(xAxis)
-        .attr("class", "xAxis")
-        .attr("transform", "translate(0," + (height - margin - labelArea) + ")");
-    svg
-        .append("g")
-        .call(yAxis)
-        .attr("class", "yAxis")
-        .attr("transform", "translate(" + (margin + labelArea) + ", 0)");
-       
-    // create thecircle variable to group state initial labels and dots
-    var theCircles = svg.selecAll("g theCircles").data(theData).enter();
+    // Create tooltip in the chart
+    chartGroup.call(toolTip);
 
-    theCircles   
-        .append("circle")
-        .attr("cx", function(d) {
-            return xScale(d)[curlX] ;
-        })
-        .attr("cy", function(d) {
-            return yScale(d)[curlY] ;
-        }) 
-        .attr("r", circRadius)
-        .attr("class", function(d) {
-            return "stateCircle " + d.abbr;
-})
+    // Create event listeners to display and hide the tooltip
+    circlesGroup.on("mouseover", function(data) {
+      toolTip.show(data, this);
+    })
+      // onmouseout event
+      .on("mouseout", function(data, index) {
+        toolTip.hide(data);
+      });
+
+    // Create axes labels for the y 
+    chartGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left + 40)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .attr("class", "axisText")
+      .text("Lack Healthcare");
+
+      // Create axes labels for the x
+    chartGroup.append("text")
+      .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+      .attr("class", "axisText")
+      .text("In Proverty (%)");
+  }).catch(function(error) {
+    console.log(error);
+  });
+
+
+
+
+
+
